@@ -4,20 +4,24 @@ import Card from "../UI/Card";
 import "./IngredientForm.css";
 
 const IngredientForm = React.memo((props) => {
-  const [inputState, setInputState] = useState({ title: "", amount: "" });
+  // const [inputState, setInputState] = useState({ title: "", amount: "" });
+  const [enteredtitle, setEnteredtitle] = useState("");
+  const [enteredAmount, setEnteredAmount] = useState("");
 
   const titleChangeHandler = (event) => {
-    setInputState((prevState) => ({
-      title: event.target.value,
-      amount: prevState.amount,
-    }));
+    setEnteredtitle(event.target.value);
+    // setInputState((prevState) => ({
+    //   title: event.target.value,
+    //   amount: prevState.amount,
+    // }));
   };
 
   const amountChangeHandler = (event) => {
-    setInputState((prevState) => ({
-      title: prevState.title,
-      amount: event.target.value,
-    }));
+    setEnteredAmount(event.target.value);
+    // setInputState((prevState) => ({
+    //   title: prevState.title,
+    //   amount: event.target.value,
+    // }));
   };
 
   const submitHandler = (event) => {
@@ -34,7 +38,7 @@ const IngredientForm = React.memo((props) => {
             <input
               type="text"
               id="title"
-              value={inputState.title}
+              value={enteredtitle}
               onChange={titleChangeHandler}
             />
           </div>
@@ -44,7 +48,7 @@ const IngredientForm = React.memo((props) => {
             <input
               type="number"
               id="amount"
-              value={inputState.amount}
+              value={enteredAmount}
               onChange={amountChangeHandler}
             />
           </div>
