@@ -55,12 +55,12 @@ const Ingredients = () => {
       })
       .catch((error) => {
         setError("Something went wrong!");
+        setIsLoading(false);
       });
   };
 
   const clearError = () => {
     setError(null);
-    setIsLoading(false);
   };
 
   return (
