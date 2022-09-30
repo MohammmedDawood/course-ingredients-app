@@ -21,8 +21,15 @@ const ingredientReducer = (currentIngredients, action) => {
 
 const Ingredients = () => {
   const [userIngredients, dispatch] = useReducer(ingredientReducer, []);
-  const { isLoading, error, data, sendRequest, reqExtra, reqIdentifier } =
-    useHttp();
+  const {
+    isLoading,
+    error,
+    data,
+    sendRequest,
+    reqExtra,
+    reqIdentifier,
+    clearError,
+  } = useHttp();
 
   console.log("RENDERING INGREDIENTS", userIngredients);
 
@@ -66,10 +73,6 @@ const Ingredients = () => {
     },
     [sendRequest]
   );
-
-  const clearError = useCallback(() => {
-    // dispatchHttp({ type: "CLEAR" });
-  }, []);
 
   const ingredientList = useMemo(() => {
     return (
