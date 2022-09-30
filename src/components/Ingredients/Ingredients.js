@@ -1,4 +1,4 @@
-import React, { useReducer, useCallback, useMemo } from "react"; //useEffect,useState,
+import React, { useReducer, useEffect, useCallback, useMemo } from "react"; //useEffect,useState,
 
 import IngredientForm from "./IngredientForm";
 import IngredientList from "./IngredientList";
@@ -36,7 +36,8 @@ const ingredientReducer = (currentIngredients, action) => {
 
 const Ingredients = () => {
   const [userIngredients, dispatch] = useReducer(ingredientReducer, []);
-  const [isLoading, error, data, sendRequest] = useHttp();
+  const { isLoading, error, data, sendRequest, reqExtra, reqIdentifier } =
+    useHttp();
   // const [httpState, dispatchHttp] = useReducer(httpReducer, {
   //   loading: false,
   //   error: null,
@@ -44,11 +45,29 @@ const Ingredients = () => {
 
   console.log("RENDERING INGREDIENTS", userIngredients);
 
+  useEffect(() => {
+    if (!isLoading && !error && reqIdentifier === "REMOVE_INGREDIENT") {
+      dispatch({ type: "DELETE", id: reqExtra });
+    } else if (!isLoading && !error && reqIdentifier === "ADD_INGREDIENT") {
+      dispatch({
+        type: "ADD",
+        ingredient: { id: data.name, ...reqExtra },
+      });
+    }
+  }, [data, reqExtra, reqIdentifier, isLoading, error]);
+
   const filteredIngredientsHandler = useCallback((filteredIngredients) => {
     dispatch({ type: "SET", ingredients: filteredIngredients });
   }, []);
 
   const addIngredientHandler = useCallback((ingredient) => {
+    sendRequest(
+      `https://react-http-c5e4d-default-rtdb.europe-west1.firebasedatabase.app/ingredients.json`,
+      "POST",
+      JSON.stringify(ingredient),
+      ingredient,
+      "ADD_INGREDIENT"
+    );
     // dispatchHttp({ type: "SEND" });
     // //server update
     // fetch(
@@ -64,10 +83,10 @@ const Ingredients = () => {
     //     return response.json();
     //   })
     //   .then((responseData) => {
-    //     dispatch({
-    //       type: "ADD",
-    //       ingredient: { id: responseData.name, ...ingredient },
-    //     });
+    // dispatch({
+    //   type: "ADD",
+    //   ingredient: { id: responseData.name, ...ingredient },
+    // });
     //   });
   }, []);
 
@@ -75,7 +94,10 @@ const Ingredients = () => {
     (ingredientId) => {
       sendRequest(
         `https://react-http-c5e4d-default-rtdb.europe-west1.firebasedatabase.app/ingredients/${ingredientId}.json`,
-        "DELETE"
+        "DELETE",
+        null,
+        ingredientId,
+        "REMOVE_INGREDIENT"
       );
       // dispatchHttp({ type: "SEND" });
       // fetch(
@@ -103,7 +125,7 @@ const Ingredients = () => {
     return (
       <IngredientList
         ingredients={userIngredients}
-        onRemoveItem={removeIngredientHandler}
+        onRemoveIngredient={removeIngredientHandler}
       />
     );
   }, [userIngredients, removeIngredientHandler]);
